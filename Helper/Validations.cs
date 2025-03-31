@@ -4,40 +4,22 @@ namespace Bingo.Helper
 {
     public class Validations
     {
-        private bool ValidateField(string _title, int _numCard)
+        public static bool ValidateField(string _title, int _numCard)
         {
-            if (string.IsNullOrEmpty(_title))
-            {
-                // _isSending = "El título es requerido.";
+            if (string.IsNullOrEmpty(_title)) return false;
 
-                return false;
-            }
-            if (_numCard == 0)
-            {
-                //  _isSending = "Mayor a cero es requerido.";
+            if (_numCard == 0) return false;
 
-                return false;
-            }
             return true;
         }
 
-        private bool ValidateEmail(string _emailTo)
+        public static bool ValidateEmail(string _emailTo)
         {
-            if (string.IsNullOrEmpty(_emailTo))
-            {
-                // _isSending = "El email es requerido.";
-
-                return false;
-            }
+            if (string.IsNullOrEmpty(_emailTo)) return false;
 
             string pattern = @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$";
 
-            if (!Regex.IsMatch(_emailTo, pattern))
-            {
-                // _isSending = "No es un email válido.";
-
-                return false;
-            }
+            if (!Regex.IsMatch(_emailTo, pattern)) return false;
 
             return true;
         }

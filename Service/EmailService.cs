@@ -11,11 +11,26 @@ namespace Bingo.Service
     {
         private readonly Email_ConfigDto _emailConfig = options.Value;
 
-        public async Task<bool> SendEmail(int quantity, string title, string email)
+        public async Task<Reponse> SendEmail(int quantity, string title, string email)
         {
             try
             {
-                var cards = GenerateCard.GenerateNumbers(quantity, quantity, title);
+                if (Validations.ValidateField(title, quantity) == false)
+                {
+                    return new Reponse { Messages = "El título es requerido", Codigo = 409 };
+                }
+
+                if (Validations.ValidateField(title, quantity) == false)
+                {
+                    return new Reponse { Messages = "Debe ser Mayor a cero", Codigo = 409 };
+                }
+
+                if (Validations.ValidateEmail(email) == false)
+                {
+                    return new Reponse { Messages = "El email es incorrecto", Codigo = 409 };
+                }
+
+                var cards = GenerateCard.GenerateNumbers(quantity, 25, title);
 
                 var message = new MimeMessage();
 
@@ -27,7 +42,7 @@ namespace Bingo.Service
 
                 var body = new TextPart("plain")
                 {
-                    Text = "Puedes Descargas tus Tarjetas"//email.Content
+                    Text = "Aqui Puedes Descargas tus Tarjetas de Bingo"
                 };
 
                 var attachment = new MimePart("application", "pdf")
@@ -59,13 +74,13 @@ namespace Bingo.Service
                     await client.DisconnectAsync(true);
                 }
 
-                return true;
+                return new Reponse { Messages = $"Email enviado correctamente {email}", Codigo = 200 };
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message.ToString());
 
-                return false;
+                return new Reponse { Messages = "Ocurrio un error al enviar el email", Codigo = 500 };
             }
         }
     }
