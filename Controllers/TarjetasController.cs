@@ -11,7 +11,7 @@ namespace Bingo.Controllers
         [Route("mensaje")]
         public IActionResult Mensaje()
         {
-            return Ok(new { mesaaje = "Hola Mundo.." });
+            return Ok(new { mesaaje = "Hola Mundo..." });
         }
         [HttpPost]
         [Route("enviar_tarjetas")]
