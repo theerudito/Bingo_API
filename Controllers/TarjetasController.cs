@@ -19,13 +19,13 @@ namespace Bingo.Controllers
         {
             var obj = await _emailService.SendEmail(quantity, title, email);
 
-            if (obj == true)
+            if (obj.Codigo == 200)
             {
-                return Ok(obj);
+                return Ok(new { messaje = obj.Messages });
             }
             else
             {
-                return NotFound(new { messaje = "no se puedo completar la operacion" });
+                return NotFound(new { messaje = obj!.Messages });
             }
         }
     }
