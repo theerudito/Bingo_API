@@ -1,4 +1,5 @@
 ﻿using Bingo.Service;
+using Bingo_API.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Bingo.Controllers
@@ -15,9 +16,9 @@ namespace Bingo.Controllers
         }
         [HttpPost]
         [Route("enviar_tarjetas")]
-        public async Task<IActionResult> Generar_Tarjetas([FromBody] int quantity, string title, string email)
+        public async Task<IActionResult> Generar_Tarjetas([FromBody] TarjetaRequest request)
         {
-            var obj = await _emailService.SendEmail(quantity, title, email);
+            var obj = await _emailService.SendEmail(request.quantity, request.title, request.email);
 
             if (obj.Codigo == 200)
             {
