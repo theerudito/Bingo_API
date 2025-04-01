@@ -15,12 +15,12 @@ namespace Bingo.Service
         {
             try
             {
-                if (Validations.ValidateField(title, quantity) == false)
+                if (Validations.ValidateTitle(title) == false)
                 {
                     return new Reponse { Messages = "El título es requerido", Codigo = 409 };
                 }
 
-                if (Validations.ValidateField(title, quantity) == false)
+                if (Validations.ValidateQuantity(quantity) == false)
                 {
                     return new Reponse { Messages = "Debe ser Mayor a cero", Codigo = 409 };
                 }

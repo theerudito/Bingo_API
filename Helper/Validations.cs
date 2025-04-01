@@ -4,12 +4,16 @@ namespace Bingo.Helper
 {
     public class Validations
     {
-        public static bool ValidateField(string _title, int _numCard)
+        public static bool ValidateQuantity(int _numCard)
         {
-            if (string.IsNullOrEmpty(_title)) return false;
-
             if (_numCard == 0) return false;
 
+            return true;
+        }
+
+        public static bool ValidateTitle(string _title)
+        {
+            if (string.IsNullOrEmpty(_title)) return false;
             return true;
         }
 
