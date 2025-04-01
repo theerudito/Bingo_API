@@ -8,8 +8,14 @@ namespace Bingo.Controllers
     public class TarjetasController(IEmail _emailService) : ControllerBase
     {
         [HttpGet]
-        [Route("generar_tarjetas/{quantity}/{title}/{email}")]
-        public async Task<IActionResult> Generar_Tarjetas(int quantity, string title, string email)
+        [Route("mensaje")]
+        public IActionResult Mensaje()
+        {
+            return Ok(new { mesaaje = "Hola Mundo.." });
+        }
+        [HttpPost]
+        [Route("enviar_tarjetas")]
+        public async Task<IActionResult> Generar_Tarjetas([FromBody] int quantity, string title, string email)
         {
             var obj = await _emailService.SendEmail(quantity, title, email);
 
