@@ -38,30 +38,33 @@ namespace Bingo.Service
 
                 message.To.Add(new MailboxAddress("", email));
 
-                message.Subject = "Tarjetas Bingo";
+                message.Subject = "🎉 Tus Tarjetas de Bingo";
 
-                var body = new TextPart("plain")
+                var body = new TextPart("html")
                 {
-                    Text = "Aqui Puedes Descargas tus Tarjetas de Bingo"
+                    Text = @"
+                    <p>¡Hola!</p>
+                    <p>Aquí puedes descargar tus tarjetas de bingo en el archivo adjunto 😊.</p>"
                 };
+
 
                 var attachment = new MimePart("application", "pdf")
                 {
                     Content = new MimeContent(new MemoryStream(ManagerPDF.GenerartePDF(cards))),
-
                     ContentDisposition = new ContentDisposition(ContentDisposition.Attachment),
-
                     ContentTransferEncoding = ContentEncoding.Base64,
-
-                    FileName = "Bingo"
+                    FileName = "tarjetas-bingo.pdf"
                 };
 
                 var multipart = new Multipart("mixed");
-
                 multipart.Add(body);
-
                 multipart.Add(attachment);
+
                 message.Body = multipart;
+
+                message.Headers.Add("X-Mailer", "MailKit");
+                message.Headers.Add("X-Priority", "3");
+                message.Headers.Add("Importance", "Normal");
 
                 using (var client = new SmtpClient())
                 {
@@ -74,7 +77,7 @@ namespace Bingo.Service
                     await client.DisconnectAsync(true);
                 }
 
-                return new Reponse { Messages = $"Email enviado correctamente {email}", Codigo = 200 };
+                return new Reponse { Messages = $"Email enviado correctamente a {email}", Codigo = 200 };
             }
             catch (Exception ex)
             {
