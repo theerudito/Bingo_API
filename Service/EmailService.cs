@@ -31,7 +31,7 @@ namespace Bingo.Service
                 }
 
                 // cards: lista de tarjetas generadas
-                var cards = GenerateCard.GenerateNumbers(quantity, 25, title);
+                var cards = GenerateCard.GenerateNumbers(quantity, 25, title.ToUpper());
 
                 var message = new MimeMessage();
 
