@@ -1,0 +1,10 @@
+services:
+  api-bingo:
+    container_name: api-bingo
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "2000:8080"
+    environment:
+      - ASPNETCORE_URLS=http://+:2000

@@ -1,4 +1,5 @@
 ﻿using Bingo.Service;
+using Bingo_API.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Bingo.Controllers
@@ -8,10 +9,16 @@ namespace Bingo.Controllers
     public class TarjetasController(IEmail _emailService) : ControllerBase
     {
         [HttpGet]
-        [Route("generar_tarjetas/{quantity}/{title}/{email}")]
-        public async Task<IActionResult> Generar_Tarjetas(int quantity, string title, string email)
+        [Route("mensaje")]
+        public IActionResult Mensaje()
         {
-            var obj = await _emailService.SendEmail(quantity, title, email);
+            return Ok(new { mesaaje = "Hola Mundo..." });
+        }
+        [HttpPost]
+        [Route("enviar_tarjetas")]
+        public async Task<IActionResult> Generar_Tarjetas([FromBody] TarjetaRequest request)
+        {
+            var obj = await _emailService.SendEmail(request.quantity, request.title, request.email);
 
             if (obj.Codigo == 200)
             {
