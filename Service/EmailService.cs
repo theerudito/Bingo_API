@@ -30,51 +30,64 @@ namespace Bingo.Service
                     return new Reponse { Messages = "El email es incorrecto", Codigo = 409 };
                 }
 
-                var cards = GenerateCard.GenerateNumbers(quantity, 25, title);
+                // cards: lista de tarjetas generadas
+                var cards = GenerateCard.GenerateNumbers(quantity, 25, title.ToUpper());
 
                 var message = new MimeMessage();
 
-                message.From.Add(new MailboxAddress(_emailConfig.Alias, _emailConfig.Account));
+                // DE: tu cuenta (dominio propio)
+                message.From.Add(new MailboxAddress("Between Bytes Software", _emailConfig.Account));
 
+                // PARA: el usuario que recibe el correo
                 message.To.Add(new MailboxAddress("", email));
 
-                message.Subject = "Tarjetas Bingo";
+                // Agrega un Reply-To (recomendado) soporte@between-bytes.como
+                message.ReplyTo.Add(new MailboxAddress("Soporte", "erudito.tv@gmail.com"));
 
+                // Asunto
+                message.Subject = "Tus Tarjetas de Bingo";
+
+                // Cuerpo del mensaje
                 var body = new TextPart("plain")
                 {
-                    Text = "Aqui Puedes Descargas tus Tarjetas de Bingo"
+                    Text = @"Hola,
+
+                        Gracias por usar nuestro generador de tarjetas de Bingo.
+
+                        Adjuntamos tus tarjetas en PDF. Si no lo solicitaste tú, puedes ignorar este mensaje.
+
+                        ¡Que lo disfrutes!
+
+                        -- 
+                        El equipo de Between Bytes Software"
                 };
 
+                // Archivo adjunto (PDF)
                 var attachment = new MimePart("application", "pdf")
                 {
                     Content = new MimeContent(new MemoryStream(ManagerPDF.GenerartePDF(cards))),
-
                     ContentDisposition = new ContentDisposition(ContentDisposition.Attachment),
-
                     ContentTransferEncoding = ContentEncoding.Base64,
-
-                    FileName = "Bingo"
+                    FileName = "Tarjetas-Bingo.pdf"
                 };
 
+                // Combinar mensaje y adjunto
                 var multipart = new Multipart("mixed");
-
                 multipart.Add(body);
-
                 multipart.Add(attachment);
                 message.Body = multipart;
 
+                // Enviar usando SMTP de Gmail
                 using (var client = new SmtpClient())
                 {
                     await client.ConnectAsync(_emailConfig.Host, _emailConfig.Port, SecureSocketOptions.StartTls);
-
                     await client.AuthenticateAsync(_emailConfig.Account, _emailConfig.Password);
-
                     await client.SendAsync(message);
-
                     await client.DisconnectAsync(true);
                 }
 
-                return new Reponse { Messages = $"Email enviado correctamente {email}", Codigo = 200 };
+                return new Reponse { Messages = $"Email enviado correctamente a {email}", Codigo = 200 };
+
             }
             catch (Exception ex)
             {
