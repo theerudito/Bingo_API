@@ -14,7 +14,7 @@ namespace Bingo.Helper
                 c.IdCard = i + 1;
                 c.Bingo = "BINGO";
                 c.City = _title;
-                c.Developer = "Hecho por Between Byte Software";
+                c.Developer = "Hecho por Between Bytes Software";
                 c.Phone = "0960806054";
                 c.Data = GenerateData(num);
                 cards.Add(c);

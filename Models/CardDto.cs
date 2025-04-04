@@ -8,5 +8,6 @@
         public List<string> Data { get; set; } = null!;
         public string Developer { get; set; } = string.Empty;
         public string Phone { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
     }
 }

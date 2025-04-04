@@ -52,7 +52,7 @@ namespace Bingo.Helper
                                             // HEADER
                                             cardColumn.Item().PaddingBottom(5).Column(header =>
                                             {
-                                                header.Item().Text(card.City).FontSize(14).Bold().AlignCenter();
+                                                header.Item().Text(card.City.ToUpper()).FontSize(14).Bold().AlignCenter();
                                             });
 
                                             cardColumn.Item().Row(row =>

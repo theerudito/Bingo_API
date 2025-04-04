@@ -11,7 +11,7 @@ namespace Bingo.Service
     {
         private readonly Email_ConfigDto _emailConfig = options.Value;
 
-        public async Task<Reponse> SendEmail(int quantity, string title, string email)
+        public async Task<Reponse> SendCard(int quantity, string title, string email)
         {
             try
             {
@@ -58,7 +58,7 @@ namespace Bingo.Service
 
                     ¡Que lo disfrutes!
 
-                    -- 
+                    --
                     El equipo de Between Bytes Software"
                 };
 
@@ -87,7 +87,73 @@ namespace Bingo.Service
                 }
 
                 return new Reponse { Messages = $"Email enviado correctamente a {email}", Codigo = 200 };
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message.ToString());
 
+                return new Reponse { Messages = "Ocurrio un error al enviar el email", Codigo = 500 };
+            }
+        }
+
+        public async Task<Reponse> SendCards(List<CardDto> cardList)
+        {
+            try
+            {
+                if (cardList == null || cardList.Count == 0)
+                {
+                    return new Reponse { Messages = "No hay tarjetas para enviar", Codigo = 409 };
+                }
+
+                var email = cardList.Select(x => x.Email).FirstOrDefault();
+
+                var message = new MimeMessage();
+
+                message.From.Add(new MailboxAddress("Between Bytes Software", _emailConfig.Account));
+
+                message.To.Add(new MailboxAddress("", email));
+
+                // Agrega un Reply-To (recomendado) soporte@between-bytes.tech
+                //message.ReplyTo.Add(new MailboxAddress("Soporte", "erudito.dev@"));
+
+                message.Subject = "Tus Tarjetas de Bingo";
+
+                var body = new TextPart("plain")
+                {
+                    Text = @"Hola,
+
+                    Gracias por usar nuestro generador de tarjetas de Bingo.
+
+                    Adjuntamos tus tarjetas en PDF. Si no lo solicitaste tú, puedes ignorar este mensaje.
+
+                    ¡Que lo disfrutes!
+
+                    --
+                    El equipo de Between Bytes Software"
+                };
+
+                var attachment = new MimePart("application", "pdf")
+                {
+                    Content = new MimeContent(new MemoryStream(ManagerPDF.GenerartePDF(cardList))),
+                    ContentDisposition = new ContentDisposition(ContentDisposition.Attachment),
+                    ContentTransferEncoding = ContentEncoding.Base64,
+                    FileName = "Tarjetas-Bingo.pdf"
+                };
+
+                var multipart = new Multipart("mixed");
+                multipart.Add(body);
+                multipart.Add(attachment);
+                message.Body = multipart;
+
+                using (var client = new SmtpClient())
+                {
+                    await client.ConnectAsync(_emailConfig.Host, _emailConfig.Port, SecureSocketOptions.StartTls);
+                    await client.AuthenticateAsync(_emailConfig.Account, _emailConfig.Password);
+                    await client.SendAsync(message);
+                    await client.DisconnectAsync(true);
+                }
+
+                return new Reponse { Messages = $"Email enviado correctamente a {email}", Codigo = 200 };
             }
             catch (Exception ex)
             {
@@ -98,5 +164,3 @@ namespace Bingo.Service
         }
     }
 }
-
-
